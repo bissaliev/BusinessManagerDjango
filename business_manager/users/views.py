@@ -29,7 +29,6 @@ class UserLogoutView(LogoutView): ...
 class RegisterView(CreateView):
     template_name = "users/register.html"
     form_class = RegisterForm
-    success_url = "http://127.0.0.1:8000/admin/"
 
 
 class UpdateProfileView(AdminAndOwnerRequired, UpdateView):

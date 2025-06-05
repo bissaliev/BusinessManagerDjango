@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Главная
+{% endblock title %}
+
+{% block content %}
+<ul>
+    <li><a href="{% url 'users:profile' request.user.pk %}">Профиль</a></li>
+</ul>
+{% endblock content %}
