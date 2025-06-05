@@ -11,13 +11,13 @@ ALLOWED_HOSTS = []
 
 
 INSTALLED_APPS = [
+    "users.apps.UsersConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "users.apps.UsersConfig",
 ]
 
 MIDDLEWARE = [
@@ -32,10 +32,12 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "business_manager.urls"
 
+TEMPLATE_DIR = BASE_DIR / "templates"
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [TEMPLATE_DIR],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -72,8 +74,14 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_USER_MODEL = "users.User"
 
-LANGUAGE_CODE = "en-us"
+LOGIN_URL = "users:login"
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "users:login"
+
+
+LANGUAGE_CODE = "ru"
 
 TIME_ZONE = "UTC"
 
@@ -83,5 +91,6 @@ USE_TZ = True
 
 
 STATIC_URL = "static/"
+STATICFILES_DIRS = ["static"]
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
