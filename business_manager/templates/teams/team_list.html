@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Список команд
+{% endblock title %}
+
+{% block content %}
+<div class="card-group">
+    {% for team in obj_list %}
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">{{ team.name }}</h5>
+            <p class="card-text"><small class="text-body-secondary">{{ team.created_at }}</small></p>
+            <a class="btn btn-primary" href="{% url 'teams:team_edit' team.pk %}">Редактировать</a>
+            <a class="btn btn-danger" href="{% url 'teams:team_delete' team.pk %}">Удалить</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<div>
+    {% include 'includes/paginator.html' %}
+</div>
+{% endblock content %}
