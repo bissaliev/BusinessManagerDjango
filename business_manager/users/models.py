@@ -31,7 +31,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         ADMIN = "AD", "Админ"
 
     email = models.EmailField(_("email address"), unique=True)
-    role = models.CharField("роль", max_length=2, choices=Role, default=Role.USER)
+    role = models.CharField("роль", max_length=2, choices=Role.choices, default=Role.USER)
     first_name = models.CharField(_("first name"), max_length=150, blank=True)
     last_name = models.CharField(_("last name"), max_length=150, blank=True)
     is_staff = models.BooleanField(
