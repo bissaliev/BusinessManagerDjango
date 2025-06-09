@@ -96,3 +96,5 @@ STATIC_URL = "static/"
 STATICFILES_DIRS = ["static"]
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+PAGE_SIZE = 10
