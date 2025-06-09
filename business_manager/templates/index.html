@@ -6,7 +6,11 @@
 
 {% block content %}
 <ul>
+
+    {% if request.user.is_authenticated %}
     <li><a href="{% url 'users:profile' request.user.pk %}">Профиль</a></li>
+    {% endif %}
+
     <li>
         <a href="{% url 'teams:team_list' %}">Команды</a>
         <ul>
