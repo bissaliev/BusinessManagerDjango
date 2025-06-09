@@ -1,14 +1,37 @@
+from django.conf import settings
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.db.models import Count, F, Value
 from django.db.models.functions import Concat
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
+from users.models import User
 
 from teams.forms import AddUserToTeamForm, TeamForm
 from teams.models import Team, TeamMembership
 
+PAGE_SIZE = settings.PAGE_SIZE
 
-class TeamCreateView(View):
+
+class AdminRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
+    """Миксин ограничивающий получение ресурса только авторизованным пользователем с ролью ADMIN"""
+
+    def test_func(self):
+        return self.request.user.role == User.Role.ADMIN
+
+
+class DetailBaseView(View):
+    """Базовый класс для получения одной записи команды только его администратором"""
+
+    def get_team(self, pk: int) -> Team:
+        team = get_object_or_404(Team, pk=pk)
+        if team.creator != self.request.user:
+            raise PermissionDenied("Командой может управлять только его администратор")
+        return team
+
+
+class TeamCreateView(AdminRequiredMixin, View):
     """Создание команды"""
 
     form_class = TeamForm
@@ -35,19 +58,19 @@ class TeamListView(View):
     def get(self, request):
         teams = self.model.objects.annotate(count_members=Count("members"))
         page_number = request.GET.get("page")
-        paginator = Paginator(teams, 10)
+        paginator = Paginator(teams, PAGE_SIZE)
         obj_list = paginator.get_page(page_number)
         return render(request, self.template_name, {"obj_list": obj_list})
 
 
-class TeamEditView(View):
+class TeamEditView(AdminRequiredMixin, DetailBaseView):
     """Редактирование данных команды"""
 
     form_class = TeamForm
     template_name = "teams/team_form.html"
 
     def get(self, request, pk: int):
-        team = get_object_or_404(Team, pk=pk)
+        team = self.get_team(pk)
         form = self.form_class(instance=team)
         return render(request, self.template_name, {"form": form})
 
@@ -67,7 +90,6 @@ class TeamDetailView(View):
 
     def get(self, request, pk):
         team = get_object_or_404(Team, pk=pk)
-        employees = team.members.all()
         employees = (
             TeamMembership.objects.select_related("user")
             .filter(team_id=team.id)
@@ -75,38 +97,41 @@ class TeamDetailView(View):
                 full_name=Concat(F("user__first_name"), Value(" "), F("user__last_name")),
             )
         )
-        return render(request, self.template_name, {"team": team, "employees": employees})
+        paginator = Paginator(employees, PAGE_SIZE)
+        page_number = request.GET.get("page")
+        obj_list = paginator.get_page(page_number)
+        return render(request, self.template_name, {"team": team, "obj_list": obj_list})
 
 
-class TeamDeleteView(View):
+class TeamDeleteView(AdminRequiredMixin, DetailBaseView):
     """Удаление команды"""
 
     template_name = "teams/team_confirm_delete_form.html"
 
     def get(self, request, pk: int):
-        team = get_object_or_404(Team, pk=pk)
+        team = self.get_team(pk)
         return render(request, self.template_name, {"team": team})
 
     def post(self, request, pk):
-        team = get_object_or_404(Team, pk=pk)
+        team = self.get_team(pk)
         team.delete()
         return redirect("teams:team_list")
 
 
-class AddUserToTeamView(View):
+class AddUserToTeamView(AdminRequiredMixin, DetailBaseView):
     """Добавление сотрудника в команду"""
 
     template_name = "teams/add_user_to_team_form.html"
     form_class = AddUserToTeamForm
 
     def get(self, request, pk: int):
-        team = get_object_or_404(Team, pk=pk)
+        team = self.get_team(pk)
         form = self.form_class()
         return render(request, self.template_name, {"form": form, "team": team})
 
     def post(self, request, pk: int):
         try:
-            team = get_object_or_404(Team, pk=pk)
+            team = self.get_team(pk)
             form = self.form_class(request.POST)
             if not form.is_valid():
                 raise ValueError("Invalid data")
@@ -121,13 +146,14 @@ class AddUserToTeamView(View):
             return render(request, self.template_name, {"form": form, "team": team})
 
 
-class DeleteUserToTeamView(View):
+class DeleteUserToTeamView(AdminRequiredMixin, DetailBaseView):
     """Удаление сотрудника из команды"""
 
     form_class = AddUserToTeamForm
 
     def post(self, request, pk: int, user_id: int):
-        emp = get_object_or_404(TeamMembership, team_id=pk, user_id=user_id)
+        team = self.get_team(pk)
+        emp = get_object_or_404(TeamMembership, team_id=team.id, user_id=user_id)
         team_id = emp.team_id
         emp.delete()
         return redirect("teams:team_detail", team_id)
