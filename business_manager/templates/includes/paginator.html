@@ -1,16 +1,16 @@
-{% if obj_list.has_other_pages %}
+{% if object_list.has_other_pages %}
 <nav aria-label="Page navigation" class="my-5">
     <ul class="pagination">
-        {% if obj_list.has_previous %}
+        {% if object_list.has_previous %}
         <li class="page-item">
             <a class="page-link" href="?page=1">Первая</a>
         </li>
         <li class="page-item">
-            <a class="page-link" href="?page={{ obj_list.previous_page_number }}">Предыдущая</a>
+            <a class="page-link" href="?page={{ object_list.previous_page_number }}">Предыдущая</a>
         </li>
         {% endif %}
-        {% for i in obj_list.paginator.page_range %}
-        {% if obj_list.number == i %}
+        {% for i in object_list.paginator.page_range %}
+        {% if object_list.number == i %}
         <li class="page-item active">
             <span class="page-link">{{ i }}</span>
         </li>
@@ -20,12 +20,12 @@
         </li>
         {% endif %}
         {% endfor %}
-        {% if obj_list.has_next %}
+        {% if object_list.has_next %}
         <li class="page-item">
-            <a class="page-link" href="?page=obj_list.next_page_number">Следующая</a>
+            <a class="page-link" href="?page=object_list.next_page_number">Следующая</a>
         </li>
         <li class="page-item">
-            <a class="page-link" href="?page=obj_list.paginator.num_pages">Последняя</a>
+            <a class="page-link" href="?page=object_list.paginator.num_pages">Последняя</a>
         </li>
         {% endif %}
     </ul>

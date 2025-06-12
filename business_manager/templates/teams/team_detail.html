@@ -12,10 +12,12 @@
         <a class="btn btn-primary" href="{% url 'teams:team_edit' team.pk %}">Редактировать</a>
         <a class="btn btn-danger" href="{% url 'teams:team_delete' team.pk %}">Удалить</a>
         <a class="btn btn-primary" href="{% url 'teams:add_user' team.pk %}">Добавить пользователя</a>
+        <a class="btn btn-primary" href="{% url 'tasks:task_create' team.pk %}">Создать задачу</a>
+        <a class="btn btn-primary" href="{% url 'tasks:task_list' team.pk %}">Задачи команды</a>
     </div>
 </div>
 <div class="card-group mt-2">
-    {% for emp in obj_list %}
+    {% for emp in object_list %}
     <div class="card">
         <div class="card-body">
             <h5 class="card-title">{{ emp.full_name }}</h5>

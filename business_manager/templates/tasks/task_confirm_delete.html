@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}
+Подтверждение удаления команды
+{% endblock title %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 p-5">
+        <div class="card">
+            <div class="card-header">
+                Подтвердите удаление команды
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">Подтверждение удаление команды: {{ object.title }}</h5>
+                <form method="post" action="{% url 'tasks:task_delete' object.pk %}">
+                    {% csrf_token %}
+                    <div class="col-md-6 offset-md-4">
+                        <button type="submit" class="btn btn-danger">
+                            Удалить
+                        </button>
+                    </div>
+                </form>
+            </div> <!-- card body -->
+        </div> <!-- card -->
+    </div> <!-- col -->
+</div> <!-- row -->
+{% endblock content %}

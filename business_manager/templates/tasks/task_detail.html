@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Команда {{ team.name }}
+{% endblock title %}
+
+{% block content %}
+
+<div class="card text-bg-light mb-3">
+    <div class="card-header">{{ object.title }}</div>
+    <div class="card-body">
+        <h5 class="card-title">Команда: {{ object.team.name }}</h5>
+        <h5 class="card-title">Исполнитель: {{ object.assignee.first_name }} {{ object.assignee.last_name }}</h5>
+        <h5 class="card-title">Инициатор: {{ object.creator.first_name }} {{ object.creator.last_name }}</h5>
+        <h5 class="card-title">Таймаут: {{ object.start_time }} | {{ object.end_time }}</h5>
+        <h5 class="card-title">Статус: {{ object.get_status_display }}</h5>
+        <p class="card-text">{{ object.description }}</p>
+        <p class="card-text"><small class="text-body-secondary">{{ object.created_at }}</small></p>
+        <a href="{% url 'tasks:task_edit' object.team_id object.pk %}" class="btn btn-primary">Редактировать</a>
+        <a class="btn btn-danger" href="{% url 'tasks:task_delete' object.team_id object.pk %}">Удалить</a>
+    </div>
+</div>
+{% endblock content %}

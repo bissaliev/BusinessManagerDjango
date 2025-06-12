@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Список задач
+{% endblock title %}
+
+{% block content %}
+<div class="card-group">
+    {% for task in object_list %}
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">{{ task.title }}</h5>
+            <p class="card-text">
+                {{ task.description }}
+                <small class="text-body-secondary">{{ task.created_at }}</small>
+            </p>
+            <a class="btn btn-primary" href="{% url 'tasks:task_detail' task.team_id task.pk %}">Подробнее</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<div>
+    {% include 'includes/paginator.html' %}
+</div>
+{% endblock content %}
