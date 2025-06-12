@@ -59,8 +59,8 @@ class TeamListView(View):
         teams = self.model.objects.annotate(count_members=Count("members"))
         page_number = request.GET.get("page")
         paginator = Paginator(teams, PAGE_SIZE)
-        obj_list = paginator.get_page(page_number)
-        return render(request, self.template_name, {"obj_list": obj_list})
+        object_list = paginator.get_page(page_number)
+        return render(request, self.template_name, {"object_list": object_list})
 
 
 class TeamEditView(AdminRequiredMixin, DetailBaseView):
@@ -99,8 +99,8 @@ class TeamDetailView(View):
         )
         paginator = Paginator(employees, PAGE_SIZE)
         page_number = request.GET.get("page")
-        obj_list = paginator.get_page(page_number)
-        return render(request, self.template_name, {"team": team, "obj_list": obj_list})
+        object_list = paginator.get_page(page_number)
+        return render(request, self.template_name, {"team": team, "object_list": object_list})
 
 
 class TeamDeleteView(AdminRequiredMixin, DetailBaseView):

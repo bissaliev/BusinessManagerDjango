@@ -43,3 +43,9 @@ class UpdateProfileView(AdminAndOwnerRequired, UpdateView):
 class ProfileDetailView(AdminAndOwnerRequired, DetailView):
     template_name = "users/profile.html"
     model = User
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        tasks = self.object.assigned_tasks.all()
+        context["tasks"] = tasks
+        return context
