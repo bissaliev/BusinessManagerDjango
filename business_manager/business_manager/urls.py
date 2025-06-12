@@ -7,4 +7,5 @@ urlpatterns = [
     path("", TemplateView.as_view(template_name="index.html"), name="index"),
     path("users/", include("users.urls", namespace="users")),
     path("teams/", include("teams.urls", namespace="teams")),
+    path("teams/<int:team_id>/tasks/", include("tasks.urls", namespace="tasks")),
 ]
